@@ -1,0 +1,93 @@
+
+2025-07-27T21:34:29.771054
+================================ System Message ================================
+
+You will get information about a codebase that is currently on disk in the current folder.
+The user will ask you to write a script that runs the code in a specific way.
+You will answer with code blocks that include all the necessary terminal commands.
+Do not install globally. Do not use sudo.
+Do not explain the code, just give the commands.
+Do not use placeholders, use example values (like . for a folder argument) if necessary.
+
+
+================================ Human Message =================================
+
+
+        Make a unix script that
+        a) installs dependencies
+        b) runs all necessary parts of the codebase (in parallel if necessary)
+        
+Information about the codebase:
+
+```
+File: src/main.py
+1 from aiogram import Dispatcher, Bot
+2 from aiogram.types import BotCommand
+3 from aiogram.fsm.storage.memory import MemoryStorage
+4 from aiogram.utils.executor import start_polling
+5 
+6 from config import BOT_TOKEN
+7 from handlers.start_handler import register_start_handler
+8 
+9 async def set_commands(bot: Bot):
+10     commands = [
+11         BotCommand(command="/start", description="Inicia el bot")
+12     ]
+13     await bot.set_my_commands(commands)
+14 
+15 async def main():
+16     bot = Bot(token=BOT_TOKEN)
+17     dp = Dispatcher(storage=MemoryStorage())
+18 
+19     register_start_handler(dp)
+20 
+21     await set_commands(bot)
+22     await start_polling(dp, bot)
+23 
+24 if __name__ == "__main__":
+25     import asyncio
+26     asyncio.run(main())
+
+File: src/handlers/start_handler.py
+1 from aiogram import Dispatcher
+2 from aiogram.types import Message
+3 
+4 async def start_command_handler(message: Message):
+5     await message.answer("¡Hola! Bienvenido al bot de Telegram.")
+6 
+7 def register_start_handler(dp: Dispatcher):
+8     dp.message.register(start_command_handler, commands={"start"})
+
+File: src/bot.py
+1 from aiogram import Bot, Dispatcher
+2 from aiogram.fsm.storage.memory import MemoryStorage
+3 
+4 from config import BOT_TOKEN
+5 
+6 def create_bot() -> Bot:
+7     return Bot(token=BOT_TOKEN)
+8 
+9 def create_dispatcher() -> Dispatcher:
+10     return Dispatcher(storage=MemoryStorage())
+
+File: src/config.py
+1 import os
+2 
+3 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
+
+File: requirements.txt
+1 aiogram==3.0.0b7
+
+```
+
+================================== Ai Message ==================================
+
+```bash
+#!/bin/bash
+
+# Step a: Install dependencies
+pip install -r requirements.txt
+
+# Step b: Run the codebase
+python src/main.py
+```
